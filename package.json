@@ -9,10 +9,15 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@openspacelabs/react-native-zoomable-view": "^2.1.1",
     "expo": "~46.0.16",
     "expo-status-bar": "~1.4.0",
     "react": "18.0.0",
-    "react-native": "0.69.6"
+    "react-native": "0.69.6",
+    "expo-sqlite": "~10.3.0",
+    "react-native-view-shot": "3.3.0",
+    "expo-sharing": "~10.3.0",
+    "expo-av": "~12.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
