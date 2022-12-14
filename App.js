@@ -40,6 +40,8 @@ export default function App() {
   const [modalVisible, setModalVisible] = useState(false)
 
   const [soundState, setSoundState] = useState()
+
+  // Unload played sounds
   useEffect(() => {
     return soundState
       ? () => {
@@ -49,25 +51,27 @@ export default function App() {
       : undefined;
   }, [soundState])
 
+  // Create "turns" database if not existing already
   useEffect(() => {
     db.transaction(tx => {
       tx.executeSql('create table if not exists turns (id integer primary key not null, symbol text, x int, y int);')
     }, null, null)
   }, [])
 
+  // Save coordinates after each turn
   const saveTurn = (turn) => {
     db.transaction(tx => {
       tx.executeSql('insert into turns (symbol, x, y) values (?, ?, ?);', [turn.symbol, turn.x, turn.y])
     }, null, null)
   }
 
-  const gameHistory = () => {
-    db.transaction(tx => {
-      tx.executeSql('select * from turns;', [], (_, { rows }) =>
-        console.log(rows._array)
-      )
-    })
-  }
+  // const gameHistory = () => {
+  //   db.transaction(tx => {
+  //     tx.executeSql('select * from turns;', [], (_, { rows }) =>
+  //       console.log(rows._array)
+  //     )
+  //   })
+  // }
 
   // Undo last turn
   const undo = () => {
@@ -93,10 +97,12 @@ export default function App() {
     })
   }
 
+  // Delete the last played turn
   const deleteTurn = () => {
     db.transaction(tx => { tx.executeSql(`delete from turns where id = (SELECT MAX(id) FROM turns);`) })
   }
 
+  // Delete history
   const deleteHistory = () => {
     db.transaction(tx => { tx.executeSql(`delete from turns;`) }, null, resetBoard())
   }
@@ -124,7 +130,7 @@ export default function App() {
     saveTurn(currentMove)
     setBoard(newBoard)
 
-
+    // Check win form this position
     if (checkWin(row, col, board, symbol)) {
       console.log(`${symbol} Won!`)
       playSound('W')
